@@ -8,12 +8,18 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     while True:
         number = input("Enter a number (or 'quit' to exit): ")
-        if number == 'quit':
+        if number == 'quit' or number == 'exit':
             break
+        try:
+            num = int(number)
+            if num < 1 or num > 100:
+                print("Number must be between 1 and 100.")
+                continue
+        except ValueError:
+            print("Invalid input! Only numbers are allowed.")
+            continue
         s.sendall(number.encode())
         data = s.recv(1024)
         print(f"Received {data.decode()}")
-        if data.decode() == "You win!":
-            break
-        if data.decode() == "You lose!":
+        if data.decode() == "You win!" or  data.decode() == "You lose!":
             break
