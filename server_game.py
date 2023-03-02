@@ -15,7 +15,7 @@ print(f"Listening on {(HOST, PORT)}")
 lsock.setblocking(False)
 sel.register(lsock, selectors.EVENT_READ, data=None)
 
-socks = []
+numberlist = []
 
 def accept_wrapper(sock):
     conn, addr = sock.accept()  # Should be ready to read
@@ -24,7 +24,7 @@ def accept_wrapper(sock):
     data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"", random_number=random.randint(1, 100), num_sent=0)
     events = selectors.EVENT_READ | selectors.EVENT_WRITE
     sel.register(conn, events, data=data)
-    socks.append(conn)
+    numberlist.append(conn)
 
 def service_connection(key, mask):
     sock = key.fileobj
@@ -39,7 +39,7 @@ def service_connection(key, mask):
             data.num_sent += 1
             if data.num_sent > 15:
                 sock.send(b"You lose!")
-                socks.remove(sock)
+                numberlist.remove(sock)
                 sel.unregister(sock)
                 sock.close()
                 return
@@ -51,12 +51,12 @@ def service_connection(key, mask):
             else:
                 sock.send(b"You win!")
         else:
-            socks.remove(sock)
+            numberlist.remove(sock)
             sel.unregister(sock)
             sock.close()
     if mask & selectors.EVENT_WRITE:
         if data.outb:
-            for _sock in socks:
+            for _sock in numberlist:
                 if _sock != sock:
                     _sock.send(str(data.random_number).encode())
             data.outb = b''
