@@ -1,4 +1,5 @@
 import socket
+import re
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
@@ -19,6 +20,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             continue
         s.sendall(number.encode())
         data = s.recv(1024)
-        print(f"Received {data.decode()}")
-        if data.decode() == "You win!" or  data.decode() == "You lose!":
+        response = data.decode()
+        print(f"Received {response}")
+        if response.startswith("You win!"):
+            num_sent = re.findall(r"\d+", response)[0]
+            break
+        elif response == "You lose!":
             break

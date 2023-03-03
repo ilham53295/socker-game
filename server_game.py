@@ -49,7 +49,12 @@ def service_connection(key, mask):
             elif int(recv_data.strip()) > data.random_number:
                 sock.send(b"too much!")
             else:
-                sock.send(b"You win!")
+                # Send the number of times the client sent the number
+                response = f"You win! You guessed it in {data.num_sent} tries.".encode()
+                sock.send(response)
+                numberlist.remove(sock)
+                sel.unregister(sock)
+                sock.close()
         else:
             numberlist.remove(sock)
             sel.unregister(sock)
