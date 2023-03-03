@@ -23,7 +23,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         response = data.decode()
         print(f"Received {response}")
         if response.startswith("You win!"):
-            num_sent = re.findall(r"\d+", response)[0]
             break
         elif response == "You lose!":
             break
